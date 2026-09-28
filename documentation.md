@@ -65,9 +65,10 @@ visualization dependencies.
 python main.py
 ```
 
-The command starts the emulators and writes three result files under `results/`. To change the
-sampling policy, edit `config/config.yaml`. Set `measurements_count` to `null` when using a
-duration-only run; set `total_duration_seconds` to `null` for count-only sampling.
+The command starts the emulators and runs the configured sampling tests. The default suite
+writes three result files under `results/`. To change the sampling policy, edit
+`config/config.yaml`. Set `measurements_count` to `null` when using a duration-only run; set
+`total_duration_seconds` to `null` for count-only sampling.
 
 ## Validation
 

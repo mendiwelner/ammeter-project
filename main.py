@@ -39,6 +39,8 @@ if __name__ == "__main__":
         print(
             f"{ammeter_type}: {result['measurement_count']} measurements, "
             f"mean={metrics['mean']:.6f} A, "
+            f"median={metrics['median']:.6f} A, "
+            f"stddev={metrics['standard_deviation']:.6f} A, "
             f"min={metrics['minimum']:.6f} A, max={metrics['maximum']:.6f} A"
         )
 

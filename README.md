@@ -44,7 +44,7 @@ This project provides emulators for different types of ammeters: Greenlee, ENTES
 ## CIRCUTOR Ammeter
 
 - **Port**: 5002
-- **Command**: `MEASURE_CIRCUTOR -get_measurement`
+- **Command**: `MEASURE_CIRCUTOR -get_measurement -current`
 - **Measurement Logic**: Calculates current using voltage values (0.1V - 1.0V) over a number of samples and a random time step (0.001s - 0.01s).
 - **Measurement method** : Rogowski Coil Integration: I = ∫V dt
 
@@ -54,8 +54,8 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-The default run collects five measurements from each ammeter at 2 Hz. Results are written
-as JSON files under `results/`. Sampling and archive settings are configured in
+The default test run collects five measurements from each ammeter at 2 Hz. Results are
+written as JSON files under `results/`. Sampling and archive settings are configured in
 `config/config.yaml`.
 
 Bonus analysis is also available from the same run: accuracy and consistency comparison,
