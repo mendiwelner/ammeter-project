@@ -155,53 +155,71 @@ class AmmeterTestFramework:
         )
         output_directory.mkdir(parents=True, exist_ok=True)
         plot_types = visualization.get("plot_types", ["line", "boxplot", "histogram", "rolling_mean"])
+        device_items = list(results.items())
+        if not device_items:
+            return []
+
+        def create_device_subplots(title: str):
+            """Create one independently scaled subplot for each ammeter."""
+            figure, subplot_grid = plt.subplots(
+                len(device_items),
+                1,
+                figsize=(10, max(3, 2.8 * len(device_items))),
+                squeeze=False,
+            )
+            figure.suptitle(title)
+            return figure, subplot_grid[:, 0]
+
         paths = []
         if "line" in plot_types:
-            figure, axis = plt.subplots()
-            for ammeter_type, result in results.items():
+            figure, axes = create_device_subplots("Ammeter measurements")
+            for (ammeter_type, result), axis in zip(device_items, axes):
                 axis.plot(range(1, len(result["measurements"]) + 1), result["measurements"], marker="o", label=ammeter_type)
-            axis.set(title="Ammeter measurements", xlabel="Sample", ylabel="Current (A)")
-            axis.legend()
+                axis.set(title=ammeter_type, xlabel="Sample", ylabel="Current (A)")
+                axis.legend()
+            figure.tight_layout(rect=(0, 0, 1, 0.97))
             line_path = output_directory / "measurements_line.png"
             figure.savefig(line_path, bbox_inches="tight")
             plt.close(figure)
             paths.append(str(line_path))
 
         if "boxplot" in plot_types:
-            figure, axis = plt.subplots()
-            labels = list(results)
-            axis.boxplot([results[name]["measurements"] for name in labels], tick_labels=labels)
-            axis.set(title="Ammeter measurement distribution", ylabel="Current (A)")
+            figure, axes = create_device_subplots("Ammeter measurement distributions")
+            for (ammeter_type, result), axis in zip(device_items, axes):
+                axis.boxplot(result["measurements"], tick_labels=[ammeter_type])
+                axis.set(title=ammeter_type, ylabel="Current (A)")
+            figure.tight_layout(rect=(0, 0, 1, 0.97))
             boxplot_path = output_directory / "measurements_boxplot.png"
             figure.savefig(boxplot_path, bbox_inches="tight")
             plt.close(figure)
             paths.append(str(boxplot_path))
 
         if "histogram" in plot_types:
-            figure, axis = plt.subplots()
-            for ammeter_type, result in results.items():
-                axis.hist(result["measurements"], bins=visualization.get("histogram_bins", 10), alpha=0.5, label=ammeter_type)
-            axis.set(title="Ammeter measurement distribution", xlabel="Current (A)", ylabel="Frequency")
-            axis.legend()
+            figure, axes = create_device_subplots("Ammeter measurement distributions")
+            for (ammeter_type, result), axis in zip(device_items, axes):
+                axis.hist(result["measurements"], bins=visualization.get("histogram_bins", 10))
+                axis.set(title=ammeter_type, xlabel="Current (A)", ylabel="Frequency")
+            figure.tight_layout(rect=(0, 0, 1, 0.97))
             histogram_path = output_directory / "measurements_histogram.png"
             figure.savefig(histogram_path, bbox_inches="tight")
             plt.close(figure)
             paths.append(str(histogram_path))
 
         if "rolling_mean" in plot_types:
-            figure, axis = plt.subplots()
             window = int(visualization.get("rolling_window", 3))
             if window < 1:
                 raise ValueError("visualization.rolling_window must be positive")
-            for ammeter_type, result in results.items():
+            figure, axes = create_device_subplots("Rolling mean of measurements")
+            for (ammeter_type, result), axis in zip(device_items, axes):
                 measurements = result["measurements"]
                 rolling_means = [
                     statistics.fmean(measurements[max(0, index - window + 1): index + 1])
                     for index in range(len(measurements))
                 ]
-                axis.plot(range(1, len(rolling_means) + 1), rolling_means, label=ammeter_type)
-            axis.set(title="Rolling mean of measurements", xlabel="Sample", ylabel="Current (A)")
-            axis.legend()
+                axis.plot(range(1, len(rolling_means) + 1), rolling_means, marker="o", label=ammeter_type)
+                axis.set(title=ammeter_type, xlabel="Sample", ylabel="Current (A)")
+                axis.legend()
+            figure.tight_layout(rect=(0, 0, 1, 0.97))
             rolling_path = output_directory / "measurements_rolling_mean.png"
             figure.savefig(rolling_path, bbox_inches="tight")
             plt.close(figure)
