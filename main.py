@@ -56,8 +56,6 @@ def main():
     print(f"Most consistent ammeter: {comparison['most_consistent_ammeter']}")
     if comparison["accuracy_available"]:
         print(f"Most accurate ammeter: {comparison['most_accurate_ammeter']}")
-    else:
-        print("Most accurate ammeter: unavailable (configure reference_current_a)")
     if plot_paths:
         print(f"Generated plots: {', '.join(plot_paths)}")
 

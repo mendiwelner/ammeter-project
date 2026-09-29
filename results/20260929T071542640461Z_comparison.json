@@ -1,0 +1,24 @@
+{
+  "comparison_id": "20260929T071542640461Z",
+  "reference_current_a": null,
+  "accuracy_available": false,
+  "devices": {
+    "greenlee": {
+      "mean_current_a": 0.10579233204941288,
+      "standard_deviation_a": 0.07089139104457931,
+      "coefficient_of_variation": 0.6700995211209425
+    },
+    "entes": {
+      "mean_current_a": 72.81829971705699,
+      "standard_deviation_a": 45.930758715741874,
+      "coefficient_of_variation": 0.6307584617357254
+    },
+    "circutor": {
+      "mean_current_a": 0.037093840889649066,
+      "standard_deviation_a": 0.00507699993471088,
+      "coefficient_of_variation": 0.13686908157649436
+    }
+  },
+  "most_consistent_ammeter": "circutor",
+  "most_accurate_ammeter": null
+}
