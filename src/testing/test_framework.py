@@ -12,9 +12,15 @@ from Ammeters.client import request_current_from_ammeter
 
 class AmmeterTestFramework:
     def __init__(self, config_path: str = "config/config.yaml"):
+        """Load the YAML configuration used by the testing framework."""
         self.config = load_config(config_path)
 
     def run_test(self, ammeter_type: str) -> Dict:
+        """Collect, analyze, and archive measurements for one configured ammeter.
+
+        Sampling stops when the configured measurement count or duration is reached.
+        Returns the test result, or raises an error if the device or sampling setup is invalid.
+        """
         ammeter = self.config.get("ammeters", {}).get(ammeter_type)
         if not ammeter:
             raise ValueError(f"Unknown ammeter type: {ammeter_type}")
@@ -76,7 +82,11 @@ class AmmeterTestFramework:
         results: Dict[str, Dict],
         reference_current_a: Optional[float] = None,
     ) -> Dict:
-        """Compare accuracy against a reference and precision across devices."""
+        """Compare device consistency and, when possible, accuracy against a reference.
+
+        Archives and returns the comparison, including the most consistent device and
+        the most accurate device when a reference current is provided.
+        """
         if not results:
             raise ValueError("At least one result is required for comparison")
 
@@ -125,6 +135,10 @@ class AmmeterTestFramework:
         return comparison
 
     def generate_visualizations(self, results: Dict[str, Dict]) -> List[str]:
+        """Generate configured plots and return their file paths.
+
+        Returns an empty list when visualization is disabled.
+        """
         visualization = self.config.get("analysis", {}).get("visualization", {}) or {}
         if not visualization.get("enabled", False):
             return []
@@ -195,6 +209,7 @@ class AmmeterTestFramework:
         return paths
 
     def _simulate_error_if_configured(self) -> None:
+        """Raise a simulated measurement error when enabled and selected randomly."""
         simulation = self.config.get("testing", {}).get("error_simulation", {}) or {}
         if not simulation.get("enabled", False):
             return
@@ -210,10 +225,15 @@ class AmmeterTestFramework:
 
     @staticmethod
     def _coefficient_of_variation(measurements: List[float]) -> float:
+        """Return sample standard deviation divided by the absolute sample mean.
+
+        Returns zero when there is only one measurement or the mean is zero.
+        """
         mean = statistics.fmean(measurements)
         return statistics.stdev(measurements) / abs(mean) if len(measurements) > 1 and mean else 0.0
 
     def _archive_result(self, result: Dict) -> None:
+        """Write one test result to a uniquely named JSON file."""
         management = self.config.get("result_management", {}) or {}
         directory = Path(management.get("directory", "results"))
         directory.mkdir(parents=True, exist_ok=True)
@@ -221,6 +241,7 @@ class AmmeterTestFramework:
         path.write_text(json.dumps(result, indent=2), encoding="utf-8")
 
     def _archive_comparison(self, comparison: Dict) -> None:
+        """Write one comparison result to a uniquely named JSON file."""
         management = self.config.get("result_management", {}) or {}
         directory = Path(management.get("directory", "results"))
         directory.mkdir(parents=True, exist_ok=True)
