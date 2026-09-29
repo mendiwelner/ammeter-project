@@ -19,7 +19,7 @@ def run_circutor_emulator():
     circutor = CircutorAmmeter(5002)
     circutor.start_server()
 
-if __name__ == "__main__":
+def main():
     # Start each ammeter in a separate thread
     threading.Thread(target=run_greenlee_emulator, daemon=True).start()
     threading.Thread(target=run_entes_emulator, daemon=True).start()
@@ -60,3 +60,7 @@ if __name__ == "__main__":
         print("Most accurate ammeter: unavailable (configure reference_current_a)")
     if plot_paths:
         print(f"Generated plots: {', '.join(plot_paths)}")
+
+
+if __name__ == "__main__":
+    main()

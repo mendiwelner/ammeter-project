@@ -5,6 +5,7 @@ This project provides emulators for different types of ammeters: Greenlee, ENTES
 ## Project Structure
 
 - `Ammeters/`
+  - `main.py`: Main script to start the ammeter emulators and request current measurements.
   - `Circutor_Ammeter.py`: Emulator for the CIRCUTOR ammeter.
   - `Entes_Ammeter.py`: Emulator for the ENTES ammeter.
   - `Greenlee_Ammeter.py`: Emulator for the Greenlee ammeter.
@@ -13,11 +14,10 @@ This project provides emulators for different types of ammeters: Greenlee, ENTES
 - `config/`
   - `config.yaml`: Configuration file for the ammeter emulators.
 - `examples/`
-  - `run_tests.py`: Example test runner.
-- `main.py`: Starts the emulators and runs the complete test suite.
+  - `run_test.py`: super lyze example for run test **don't use it**.
 - `src/`
   - `testing/`
-    - `test_framework.py`: Configurable sampling, statistical analysis, and result archiving.
+    - `AmmeterTester.py`: Class to test the ammeter emulators.
   - `utils/`
     - `config.py`: Configuration settings.
     - `logger.py`: Logging setup.
@@ -44,27 +44,11 @@ This project provides emulators for different types of ammeters: Greenlee, ENTES
 ## CIRCUTOR Ammeter
 
 - **Port**: 5002
-- **Command**: `MEASURE_CIRCUTOR -get_measurement -current`
+- **Command**: `MEASURE_CIRCUTOR -get_measurement`
 - **Measurement Logic**: Calculates current using voltage values (0.1V - 1.0V) over a number of samples and a random time step (0.001s - 0.01s).
 - **Measurement method** : Rogowski Coil Integration: I = ∫V dt
 
-Install the dependencies and start the complete test run:
+To start the ammeter emulators and request current measurements, run the `main.py` script:
 ```sh
-python -m pip install -r requirements.txt
 python main.py
 ```
-
-The default test run collects five measurements from each ammeter at 2 Hz. Results are
-written as JSON files under `results/`. Sampling and archive settings are configured in
-`config/config.yaml`.
-
-Bonus analysis is also available from the same run: accuracy and consistency comparison,
-optional measurement plots, and configurable error simulation. Install the dependencies from
-`requirements.txt` before enabling plots.
-
-Accuracy requires a known reference current. Set `analysis.reference_current_a` in
-`config/config.yaml`; when it is `null`, the report deliberately omits accuracy claims and
-reports consistency only.
-
-The implementation details, fixes, and validation steps are documented in
-[`documentation.md`](documentation.md).
